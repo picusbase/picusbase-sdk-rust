@@ -1,0 +1,23 @@
+[package]
+name = "picus-errors"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Standardized error types for PicusBase SDKs"
+repository = "https://github.com/picusbase/picusbase-sdk-rust"
+homepage = "https://github.com/picusbase/picusbase-sdk-rust"
+readme = "../../README.md"
+keywords = ["picusbase", "error"]
+categories = ["rust-patterns"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"
+
+# Optional: for display formatting
+chrono = { version = "0.4", optional = true }
+
+[features]
+default = []
+timestamps = ["chrono"]

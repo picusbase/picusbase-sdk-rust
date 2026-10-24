@@ -1,0 +1,54 @@
+[package]
+name = "picusbase-sdk"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Rust SDK for the PicusBase platform: auth, platform, storage, functions, realtime"
+repository = "https://github.com/picusbase/picusbase-sdk-rust"
+homepage = "https://github.com/picusbase/picusbase-sdk-rust"
+readme = "../../README.md"
+keywords = ["picusbase", "sdk", "baas"]
+categories = ["api-bindings", "web-programming"]
+
+[dependencies]
+# Internal dependencies
+picus-errors = { version = "0.1.0", path = "../picus-errors" }
+
+# External dependencies
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+async-trait = "0.1"
+thiserror = "1.0"
+tracing = "0.1"
+uuid = { version = "1.0", features = ["serde", "v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+futures = "0.3"
+sha2 = "0.10"
+base64 = "0.22"
+rand = { version = "0.8", features = ["std", "std_rng"] }
+url = "2.5"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# Use rustls-tls-native-roots to prefer native certificates and potentially avoid aws-lc-rs default if possible
+# Note: This might still pull aws-lc-rs if other crates force it.
+reqwest = { version = "0.12", default-features = false, features = ["json", "multipart", "rustls-tls-native-roots"] }
+tokio = { version = "1", features = ["full"] }
+# Use default-features = false to avoid pulling in default-https-client which uses aws-lc-rs by default
+aws-config = { version = "1.1", default-features = false, features = ["behavior-version-latest", "rt-tokio", "rustls"] }
+aws-sdk-s3 = { version = "1.15", default-features = false, features = ["rt-tokio", "rustls"] }
+tokio-tungstenite = { version = "0.21", default-features = false, features = ["rustls-tls-native-roots", "connect"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "logging", "std", "tls12"] }
+# Native session persistence (desktop apps) — backs PicusClient::save_session/load_session.
+keyring = "3"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+reqwest = { version = "0.12", default-features = false, features = ["json", "multipart"] }
+getrandom = { version = "0.2", features = ["js"] }
+uuid = { version = "1.0", features = ["v4", "js"] }
+gloo-storage = "0.3"
+gloo-net = "0.5"
+wasm-bindgen-futures = "0.4"
+url = "2.5"
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["File", "HtmlDocument"] }
