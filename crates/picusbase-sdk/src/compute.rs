@@ -1,4 +1,4 @@
-use picus_errors::{ErrorCategory, ErrorLevel, PicusError};
+use picusbase_errors::{ErrorCategory, ErrorLevel, PicusError};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 

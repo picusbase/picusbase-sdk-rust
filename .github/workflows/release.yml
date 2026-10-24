@@ -18,14 +18,14 @@ jobs:
       - name: Tag matches both crate versions
         run: |
           want="${GITHUB_REF_NAME#v}"
-          for manifest in crates/picus-errors/Cargo.toml crates/picusbase-sdk/Cargo.toml; do
+          for manifest in crates/picusbase-errors/Cargo.toml crates/picusbase-sdk/Cargo.toml; do
             got=$(grep -m1 '^version' "$manifest" | cut -d'"' -f2)
             test "$got" = "$want" || { echo "$manifest is $got, tag is $want"; exit 1; }
           done
       - run: cargo check --workspace --all-targets
       - run: cargo check -p picusbase-sdk --target wasm32-unknown-unknown
-      - name: Dry-run picus-errors (picusbase-sdk needs it on crates.io first)
-        run: cargo publish -p picus-errors --dry-run
+      - name: Dry-run picusbase-errors (picusbase-sdk needs it on crates.io first)
+        run: cargo publish -p picusbase-errors --dry-run
 
   publish:
     needs: verify
@@ -33,11 +33,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - name: Publish picus-errors
+      - name: Publish picusbase-errors
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish -p picus-errors
-      - name: Publish picusbase-sdk once the index has picus-errors
+        run: cargo publish -p picusbase-errors
+      - name: Publish picusbase-sdk once the index has picusbase-errors
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |

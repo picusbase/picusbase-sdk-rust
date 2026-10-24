@@ -12,7 +12,7 @@ categories = ["api-bindings", "web-programming"]
 
 [dependencies]
 # Internal dependencies
-picus-errors = { version = "0.1.0", path = "../picus-errors" }
+picusbase-errors = { version = "0.1.0", path = "../picusbase-errors" }
 
 # External dependencies
 serde = { version = "1.0", features = ["derive"] }

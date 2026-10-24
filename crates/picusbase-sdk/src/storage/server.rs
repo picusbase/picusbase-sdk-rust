@@ -6,7 +6,7 @@ use aws_sdk_s3::{
     config::{Credentials, Region},
     Client,
 };
-use picus_errors::{ErrorCategory, ErrorLevel, PicusError};
+use picusbase_errors::{ErrorCategory, ErrorLevel, PicusError};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 

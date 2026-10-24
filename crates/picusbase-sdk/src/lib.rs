@@ -12,7 +12,7 @@ pub mod system;
 use auth::AuthClient;
 #[cfg(not(target_arch = "wasm32"))]
 use compute::ComputeClient;
-use picus_errors::{ErrorCategory, ErrorLevel, PicusError};
+use picusbase_errors::{ErrorCategory, ErrorLevel, PicusError};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 

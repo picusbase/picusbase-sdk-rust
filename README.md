@@ -36,12 +36,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 | Crate | Purpose |
 |---|---|
 | `picusbase-sdk` | The client: `auth`, `platform`, `storage`, `functions`, `compute`, `realtime`, `system`, `meta`, `pools`. |
-| `picus-errors` | The `PicusError` type returned by every call. |
+| `picusbase-errors` | The `PicusError` type returned by every call. |
 
 ## Versioning
 
 Both crates follow semantic versioning. A release is a git tag `vX.Y.Z` that matches the
-`version` of both crates; the tag publishes `picus-errors` first, then `picusbase-sdk`, to
+`version` of both crates; the tag publishes `picusbase-errors` first, then `picusbase-sdk`, to
 crates.io. Pre-1.0, a minor bump may contain breaking changes; each release notes them.
 
 ## License

@@ -1,5 +1,5 @@
 use crate::PicusClient;
-use picus_errors::{ErrorCategory, ErrorLevel, PicusError};
+use picusbase_errors::{ErrorCategory, ErrorLevel, PicusError};
 use serde_json::json;
 
 pub struct StorageClient<'a> {

@@ -1,5 +1,5 @@
 [package]
-name = "picus-errors"
+name = "picusbase-errors"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"

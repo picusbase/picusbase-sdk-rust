@@ -1,7 +1,7 @@
 use crate::SessionState;
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use futures::lock::Mutex;
-use picus_errors::{ErrorCategory, ErrorLevel, PicusError};
+use picusbase_errors::{ErrorCategory, ErrorLevel, PicusError};
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};

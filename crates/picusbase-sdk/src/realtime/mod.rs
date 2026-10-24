@@ -54,7 +54,7 @@ impl<T> RealtimeDBPayload<T> {
 #[cfg(not(target_arch = "wasm32"))]
 pub mod native {
     use futures::{Stream, StreamExt};
-    use picus_errors::{ErrorCategory, ErrorLevel, PicusError};
+    use picusbase_errors::{ErrorCategory, ErrorLevel, PicusError};
     use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 
     #[derive(Clone)]
@@ -139,7 +139,7 @@ pub mod wasm {
     use futures::stream::{SplitSink, SplitStream};
     use futures::{SinkExt, StreamExt};
     use gloo_net::websocket::{futures::WebSocket, Message};
-    use picus_errors::{ErrorCategory, ErrorLevel, PicusError};
+    use picusbase_errors::{ErrorCategory, ErrorLevel, PicusError};
 
     pub type WsSender = SplitSink<WebSocket, Message>;
     pub type WsReceiver = SplitStream<WebSocket>;
