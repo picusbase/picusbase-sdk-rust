@@ -62,6 +62,15 @@ impl<'a> StorageClient<'a> {
         Ok(())
     }
 
+    /// Deletes an empty bucket; the server answers 409 while it still holds objects and 404 when it does not exist.
+    pub async fn delete_bucket(&self, bucket: &str) -> Result<(), PicusError> {
+        let body = json!({ "bucket": bucket });
+        self.client
+            .post_storage("/api/v1/storage/bucket/delete", &body, self.project_ref)
+            .await?;
+        Ok(())
+    }
+
     pub async fn get_bucket_config(&self, bucket: &str) -> Result<Option<u64>, PicusError> {
         let body = json!({
             "bucket": bucket
