@@ -15,6 +15,15 @@ struct BucketConfig {
     max_size: Option<u64>,
 }
 
+/// What `StorageManager::delete_bucket` did.
+#[derive(Debug, PartialEq, Eq)]
+pub enum DeleteBucketOutcome {
+    Deleted,
+    NotFound,
+    /// The bucket still holds objects (other than its own `.picus-config`); nothing was removed.
+    NotEmpty,
+}
+
 #[derive(Clone)]
 pub struct StorageManager {
     client: Client,
@@ -472,6 +481,37 @@ impl StorageManager {
             .collect();
 
         Ok(keys)
+    }
+
+    /// Deletes a bucket that holds no objects. The `.picus-config` object that stores the bucket's
+    /// settings does not count and is removed with it; any other object makes this refuse.
+    pub async fn delete_bucket(&self, bucket: &str) -> Result<DeleteBucketOutcome, PicusError> {
+        let storage_error = |what: &str, e: String| {
+            PicusError::new("STORAGE", ErrorCategory::NET, ErrorLevel::Error, 0, format!("{what}: {e}"))
+        };
+        if self.client.head_bucket().bucket(bucket).send().await.is_err() {
+            return Ok(DeleteBucketOutcome::NotFound);
+        }
+        let listed = self
+            .client
+            .list_objects_v2()
+            .bucket(bucket)
+            .max_keys(1000)
+            .send()
+            .await
+            .map_err(|e| storage_error("Failed to list objects", e.to_string()))?;
+        if listed.contents().iter().any(|object| object.key() != Some(".picus-config")) {
+            return Ok(DeleteBucketOutcome::NotEmpty);
+        }
+        // Only the settings object can be left; a missing one is fine.
+        let _ = self.client.delete_object().bucket(bucket).key(".picus-config").send().await;
+        self.client
+            .delete_bucket()
+            .bucket(bucket)
+            .send()
+            .await
+            .map_err(|e| storage_error("Failed to delete bucket", format!("{e:?}")))?;
+        Ok(DeleteBucketOutcome::Deleted)
     }
 
     pub async fn get_bucket_max_size(&self, bucket: &str) -> Result<Option<u64>, PicusError> {
