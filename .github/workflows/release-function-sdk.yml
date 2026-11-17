@@ -1,0 +1,52 @@
+name: Release function SDK
+
+# `function-sdk-vX.Y.Z` publishes picusbase-function-sdk and picusbase-agent-runtime. It is a separate
+# tag from the client's `vX.Y.Z` so the two can change at their own pace.
+
+on:
+  push:
+    tags: ["function-sdk-v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Tag matches both crate versions and the changelog
+        run: |
+          want="${GITHUB_REF_NAME#function-sdk-v}"
+          for manifest in crates/picusbase-function-sdk/Cargo.toml crates/picusbase-agent-runtime/Cargo.toml; do
+            got=$(grep -m1 '^version' "$manifest" | cut -d'"' -f2)
+            test "$got" = "$want" || { echo "$manifest is $got, tag is $want"; exit 1; }
+          done
+          grep -q "^## $want\b" crates/picusbase-function-sdk/CHANGELOG.md || { echo "CHANGELOG.md has no entry for $want"; exit 1; }
+      - run: cargo test -p picusbase-function-sdk -p picusbase-agent-runtime
+      - name: Dry-run picusbase-function-sdk (picusbase-agent-runtime needs it on crates.io first)
+        run: cargo publish -p picusbase-function-sdk --dry-run
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Publish picusbase-function-sdk
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p picusbase-function-sdk
+      - name: Publish picusbase-agent-runtime once the index has picusbase-function-sdk
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            cargo publish -p picusbase-agent-runtime && exit 0
+            echo "retrying in 30s (attempt $attempt)"; sleep 30
+          done
+          exit 1
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true

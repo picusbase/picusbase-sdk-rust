@@ -1,3 +1,3 @@
 [workspace]
 resolver = "2"
-members = ["crates/picusbase-errors", "crates/picusbase-sdk"]
+members = ["crates/picusbase-errors", "crates/picusbase-sdk", "crates/picusbase-function-sdk", "crates/picusbase-agent-runtime"]
